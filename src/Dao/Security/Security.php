@@ -1,6 +1,11 @@
 <?php
 namespace Dao\Security;
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+
+
+
 if (version_compare(phpversion(), '7.4.0', '<')) {
         define('PASSWORD_ALGORITHM', 1);  //BCRYPT
 } else {
@@ -255,6 +260,68 @@ class Security extends \Dao\Table
     }
     private function __clone()
     {
+    }
+
+    public static function sendEmail($email, $pin) {
+        $mail = new PHPMailer();
+        $mail->IsSMTP(); // enable SMTP
+        $mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+        $mail->SMTPAuth = true; // authentication enabled
+        $mail->SMTPSecure = 'ssl'; // secure transfer enabled REQUIRED for Gmail
+        $mail->Host = "smtp.gmail.com";
+        $mail->Port = 465; // or 587
+        $mail->IsHTML(true);
+        $mail->Username = "josue14saravia@gmail.com";
+        $mail->Password = "bkebajjzwbzlqplm";
+        $mail->SetFrom("josue14saravia@gmail.com");
+        $mail->Subject = "Asunto del mensaje";
+        $mail->Body = "El pin para cambio de su contraseña es: ". $pin;
+        $mail->AddAddress($email);
+        if(!$mail->Send()) {
+           return $errorMail= false;
+        } else {
+          return $errorMail= true;
+        }
+    }
+
+    public static function updateRecovery ($pin, $fechaExp, $cod) {
+        $sqlstr= "UPDATE usuario SET `pin` = :pin, `pinExp` = :fechaExp WHERE (`usercod` = :cod);";
+        $sqlParams= array(
+            "pin" => $pin,
+            "fechaExp" => $fechaExp,
+            "cod" => $cod
+        );
+
+        return self::executeNonQuery($sqlstr, $sqlParams);
+
+    }
+
+    public static function getPin ($pin, $userCod) {
+        $sqlstr= "SELECT pin  FROM usuario where usercod= :usercod and pin= :pin  and pinExp > NOW();";
+        $sqlParams= array(
+            "usercod" => $userCod,
+            "pin" => $pin
+        );
+
+        return self::obtenerUnRegistro($sqlstr, $sqlParams);
+    }
+
+    public static function updatePassword($id, $pswd) {
+        $hashedPassword = self::_hashPassword($pswd);
+        $userpswdest = Estados::ACTIVO;
+        $userpswdexp = date('Y-m-d', time() + 7776000);  
+        $sqlstr= "UPDATE usuario SET userpswd= :pswd , userfching= now() , userpswdest= :userpswdest , userpswdexp= :userpswdexp  , userpswdchg= now()
+        WHERE usercod= :id  ";
+
+        $sqlParams= array(
+            "pswd" => $hashedPassword,
+            "userpswdest" => $userpswdest,
+            "userpswdexp" => $userpswdexp,
+            "id" => $id
+        );
+
+        return self::executeNonQuery($sqlstr, $sqlParams);
+
     }
 }
 

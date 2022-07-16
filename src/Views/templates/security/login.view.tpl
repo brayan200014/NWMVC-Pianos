@@ -27,6 +27,9 @@
         {{generalError}}
       </div>
     {{endif generalError}}
+    <div>
+      <a href="index.php?page=sec_email">¿Olvido su Contraseña?</a>
+    </div>
     <div class="row right flex-end px-4">
       <button class="primary" id="btnLogin" type="submit">Iniciar Sesión</button>
     </div>

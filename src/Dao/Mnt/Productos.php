@@ -64,6 +64,20 @@ class Productos extends Table
         return self::obtenerUnRegistro($sqlstr, $sqlParams);
     }
 
+    public static function getByDescription($filtro){
+        $sqlstr = "SELECT * FROM productos WHERE invPrdDsc LIKE :filtro;";
+        $sqlParams = array("filtro" => "%".$filtro."%");
+
+        return self::obtenerRegistros($sqlstr, $sqlParams);
+    }
+
+    public static function getByRange($min, $max){
+        $sqlstr = "SELECT * FROM productos WHERE invPrdPrice between :min and :max ;";
+        $sqlParams = array("min" => $min, "max" => $max);
+
+        return self::obtenerRegistros($sqlstr, $sqlParams);
+    }
+
     /**
      * Insert into Productos
      *

@@ -142,7 +142,7 @@ class Producto extends PublicController
         // Validar la entrada de Datos
         //  Todos valor puede y sera usando en contra del sistema
         $hasErrors = false;
-        \Utilities\ArrUtils::mergeArrayTo($_POST, $this->viewData);
+       
         if (isset($_SESSION[$this->name . "crsf_token"])
             && $_SESSION[$this->name . "crsf_token"] !== $this->viewData["crsf_token"]
         ) {

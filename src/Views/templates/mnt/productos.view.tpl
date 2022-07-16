@@ -1,7 +1,6 @@
 <h1>Trabajar con Productos</h1>
-<section>
 
-</section>
+
 <section>
   <table>
     <thead>
@@ -32,3 +31,4 @@
     </tbody>
   </table>
 </section>
+
